@@ -1,4 +1,4 @@
-package Modules;
+package com.ps.models;
 
 public class Vehicle{
     private int vin;
