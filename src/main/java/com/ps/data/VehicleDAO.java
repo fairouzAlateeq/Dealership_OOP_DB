@@ -16,10 +16,6 @@ public class VehicleDAO implements VehicleDAOInterface {
         this.dataSource = dataSource;
     }
 
-    public Vehicle getById(int id) {
-        return null;
-    }
-
     public List<Vehicle> getAll() {
         new ArrayList();
         String query = "SELECT * FROM vehicle";
@@ -92,11 +88,51 @@ public class VehicleDAO implements VehicleDAOInterface {
     }
 
     public void create(Vehicle vehicle) {
+        String query = "INSERT INTO vehicle (vin, make, model, year) VALUES (?, ?, ?, ?)";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, vehicle.getVin());
+            preparedStatement.setString(2, vehicle.getMake());
+            preparedStatement.setString(3, vehicle.getModel());
+            preparedStatement.setInt(4, vehicle.getYear());
+
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void update(int id, Vehicle vehicle) {
+        String query = "UPDATE vehicle SET vin = ?, make = ?, model = ?, year = ? WHERE id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, vehicle.getVin());
+            preparedStatement.setString(2, vehicle.getMake());
+            preparedStatement.setString(3, vehicle.getModel());
+            preparedStatement.setInt(4, vehicle.getYear());
+            preparedStatement.setInt(5, id);
+
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void delete(int id) {
+        String query = "DELETE FROM vehicle WHERE id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
