@@ -3,6 +3,7 @@ package com.ps.models;
 public class Vehicle{
     private int vin;
     private int year;
+    private boolean sold;
     private String make;
     private String model;
     private String vehicleType;
@@ -10,9 +11,8 @@ public class Vehicle{
     private int odometer;
     private double price;
 
-    public Vehicle(int vin, int year, String make, String model, String vehicleType, String color, int odometer, double price) {
+    public Vehicle(int vin, String make, String model, String vehicleType, String color,boolean sold, int odometer, double price) {
         this.vin = vin;
-        this.year = year;
         this.make = make;
         this.model = model;
         this.vehicleType = vehicleType;
@@ -21,20 +21,28 @@ public class Vehicle{
         this.price = price;
     }
 
+    public Vehicle(int vin, String make, String model, String color, boolean sold, int dealershipId) {
+        this.vin = vin;
+        this.make = make;
+        this.model = model;
+        this.color = color;
+        this.sold = sold;
+    }
+
+    public boolean isSold() {
+        return sold;
+    }
+
+    public void setSold(boolean sold) {
+        this.sold = sold;
+    }
+
     public int getVin() {
         return vin;
     }
 
     public void setVin(int vin) {
         this.vin = vin;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public String getMake() {
@@ -84,9 +92,11 @@ public class Vehicle{
     public void setPrice(double price) {
         this.price = price;
     }
+
+
     @Override
     public String toString() {
-        return "VIN: " + vin + ", Year: " + year + ", Make: " + make + ", Model: " + model +
+        return "VIN: " + vin + ", Make: " + make + ", Model: " + model +
                 ", Type: " + vehicleType + ", Color: " + color + ", Odometer: " + odometer +
                 ", Price: " + price;
     }

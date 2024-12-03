@@ -5,6 +5,7 @@ import com.ps.models.Vehicle;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
@@ -16,6 +17,31 @@ public class VehicleDAO implements VehicleDAOInterface {
         this.dataSource = dataSource;
     }
 
+    @Override
+    public Vehicle getByVin(int vin){
+        String query = "Select * from vehicle where vin = ?";
+
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ){
+            //inject user input
+            preparedStatement.setInt(1, vin);
+            // setresultset
+            try (
+                    ResultSet resultSet = preparedStatement.executeQuery();
+            ){
+                resultSet.next();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return vehicles;
+    }
+
+    @Override
     public List<Vehicle> getAll() {
         new ArrayList();
         String query = "SELECT * FROM vehicle";
@@ -87,8 +113,9 @@ public class VehicleDAO implements VehicleDAOInterface {
         return null;
     }
 
+    @Override
     public void create(Vehicle vehicle) {
-        String query = "INSERT INTO vehicle (vin, make, model, year) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO vehicle (vin, make, model, color) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -96,7 +123,7 @@ public class VehicleDAO implements VehicleDAOInterface {
             preparedStatement.setInt(1, vehicle.getVin());
             preparedStatement.setString(2, vehicle.getMake());
             preparedStatement.setString(3, vehicle.getModel());
-            preparedStatement.setInt(4, vehicle.getYear());
+            preparedStatement.setString(4, vehicle.getColor());
 
             preparedStatement.executeUpdate();
         } catch (Exception e) {
@@ -104,8 +131,9 @@ public class VehicleDAO implements VehicleDAOInterface {
         }
     }
 
+    @Override
     public void update(int id, Vehicle vehicle) {
-        String query = "UPDATE vehicle SET vin = ?, make = ?, model = ?, year = ? WHERE id = ?";
+        String query = "UPDATE vehicle SET make = ?, model = ?, color = ?, sold = ? WHERE vin = ?";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -113,8 +141,9 @@ public class VehicleDAO implements VehicleDAOInterface {
             preparedStatement.setInt(1, vehicle.getVin());
             preparedStatement.setString(2, vehicle.getMake());
             preparedStatement.setString(3, vehicle.getModel());
-            preparedStatement.setInt(4, vehicle.getYear());
-            preparedStatement.setInt(5, id);
+            preparedStatement.setString(4, vehicle.getColor());
+            preparedStatement.setBoolean(5, vehicle.isSold());
+            preparedStatement.setInt(6, id);
 
             preparedStatement.executeUpdate();
         } catch (Exception e) {
@@ -122,6 +151,7 @@ public class VehicleDAO implements VehicleDAOInterface {
         }
     }
 
+    @Override
     public void delete(int id) {
         String query = "DELETE FROM vehicle WHERE id = ?";
 
@@ -134,5 +164,16 @@ public class VehicleDAO implements VehicleDAOInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Vehicle mapVehicle(ResultSet resultSet) throws SQLException {
+        int vin = resultSet.getInt("vin");
+        String make = resultSet.getString("make");
+        String model = resultSet.getString("model");
+        String color = resultSet.getString("color");
+        boolean sold = resultSet.getBoolean("sold");
+        int dealershipId = resultSet.getInt("dealership_id");
+
+        return new Vehicle(vin, make, model, color, sold, dealershipId);
     }
 }

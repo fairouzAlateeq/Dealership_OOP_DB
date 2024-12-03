@@ -4,7 +4,7 @@ import com.ps.models.Vehicle;
 import java.util.List;
 
 public interface VehicleDAOInterface {
-    // Vehicle getById(int var1);
+    Vehicle getByVin(int vin);
 
     List<Vehicle> getAll();
 
