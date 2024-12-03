@@ -31,14 +31,16 @@ public class VehicleDAO implements VehicleDAOInterface {
             try (
                     ResultSet resultSet = preparedStatement.executeQuery();
             ){
-                resultSet.next();
+                if(resultSet.next()){
+                    return mapVehicle(resultSet);
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return vehicles;
+        return null;
     }
 
     @Override
